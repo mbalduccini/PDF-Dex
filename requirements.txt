@@ -1,3 +1,4 @@
 PyPDF4
 nltk
 textract
+elasticsearch
