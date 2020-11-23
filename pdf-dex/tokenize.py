@@ -1,22 +1,30 @@
 from utilities.ntlk_import import *
+from collections import Counter
 import re
+import unittest
 
-regex = re.compile('[^a-zA-Z]')
+# ---------------------------------------------------------------------------------
+regex = re.compile('[^a-z0-9]')
 stop_words = set(stopwords.words('english'))
+
 
 def text_clean(full_text: str) -> str:
     word_bag = full_text.split()
+    clean_text = []
 
     for word in word_bag:
         tmp_word = word.lower()
-        
-        # Remove non-alpha
         tmp_word = regex.sub('', tmp_word)
-
-        tmp_word = word_lemmantize(tmp_word)
+        
+        if tmp_word == '':
+            continue
 
         if not is_stopword(tmp_word):
-            yield tmp_word
+           clean_text.append(tmp_word)
+
+    lemmantized_list = word_lemmantize(clean_text)
+
+    return lemmantized_list
 
 
 def is_noun(tag):
@@ -33,6 +41,7 @@ def is_adverb(tag):
 
 def is_adjective(tag):
     return tag in ['JJ', 'JJR', 'JJS']
+
 
 def is_stopword(word):
     return word in stop_words
@@ -51,36 +60,61 @@ def penn_to_wordnet(tag):
         return None
 
 
-def word_lemmantize(word):
-    tag = nltk.pos_tag(word_tokenize(word))
-    wordnet_tag = penn_to_wordnet(tag[0][1])
+def word_lemmantize(word_list):
+    tags = nltk.pos_tag(word_list)
+    lemmantized_list = []
+
+    for tag in tags:
+      wordnet_tag = penn_to_wordnet(tag[1])
     
-    if wordnet_tag != None:
-        return WordNetLemmatizer().lemmatize(tag[0][0],wordnet_tag)
+      if wordnet_tag != None:
+          lemmantized_list.append( WordNetLemmatizer().lemmatize(tag[0],wordnet_tag) )
+      else:
+          lemmantized_list.append(tag[0])
 
-    return word
+    return lemmantized_list
+
+def test_clean_text():
+    test = "The quick brown\n fox was, running quickly through the yards."
+    actual_text = text_clean(test)
+    expected_text = ["quick", "brown", "fox", "run", "quickly", "yard"]
+    unittest.TestCase.assertCountEqual(actual_text, expected_text)
+
+# ---------------------------------------------------------------------------------
+def text_tokenize(clean_text: list) -> dict:
+    return dict(Counter(clean_text))
 
 
-def text_tokenize(full_text):
+def test_text_tokenize():
+    word_list = ["the", "the", "result", "testing", "testing", "testing"]
+    actual = text_tokenize(word_list)
+    expected = {"the": 2, "result": 1, "testing": 3}
+    unittest.TestCase.assertDictEqual(actual, expected)
+
+
+# ---------------------------------------------------------------------------------
+def process_text(full_text: str) -> dict:
+    clean_text = text_clean(full_text)
+    tokenized = text_tokenize(clean_text)
+    
+    # call Elastic import from here
+
     pass
 
-
 if __name__=="__main__":
-    # Sample for testing
-    phrase = "The quick brown\n fox was, running quickly through the yards."
-    clean_text = text_clean(phrase)
-    for word in clean_text:
-        print(word)
+    from file_handling import read_pdf
+    import operator
+    import time
 
-# Sample output:
-#
-# The -> 
-# quick -> quick
-# brown\n -> brown
-# fox -> fox
-# was, -> 
-# running -> run
-# quickly -> quickly
-# through -> 
-# the -> 
-# yards. -> yard
+    start = time.time()
+    
+    full_text = read_pdf(r"C:\Users\datippett\Downloads\After_The_G_Zero_.pdf")
+    read_time_end = time.time()
+    print("Read PDF: ", read_time_end - start)
+
+    tokenized_text = process_text(full_text)
+    print(sorted(tokenized_text, key=tokenized_text.get, reverse=True)[:5])
+
+    end = time.time()
+    print("Parse Text: ", end - read_time_end)
+    print("Total Time: ", end - start)
