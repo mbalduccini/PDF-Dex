@@ -108,7 +108,7 @@ if __name__=="__main__":
 
     start = time.time()
     
-    full_text = read_pdf(r"C:\Users\datippett\Downloads\After_The_G_Zero_.pdf")
+    full_text = read_pdf(r"Test_PDF.pdf")
     read_time_end = time.time()
     print("Read PDF: ", read_time_end - start)
 
