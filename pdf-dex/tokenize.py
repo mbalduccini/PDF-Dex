@@ -1,15 +1,8 @@
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import wordnet as wn
-import nltk
-
-#nltk.download('punkt')
-#nltk.download('averaged_perceptron_tagger')
-# nltk.download('wordnet')
-
+from utilities.ntlk_import import *
 import re
 
 regex = re.compile('[^a-zA-Z]')
+stop_words = set(stopwords.words('english'))
 
 def text_clean(full_text: str) -> str:
     word_bag = full_text.split()
@@ -21,7 +14,9 @@ def text_clean(full_text: str) -> str:
         tmp_word = regex.sub('', tmp_word)
 
         tmp_word = word_lemmantize(tmp_word)
-        yield tmp_word
+
+        if not is_stopword(tmp_word):
+            yield tmp_word
 
 
 def is_noun(tag):
@@ -39,33 +34,53 @@ def is_adverb(tag):
 def is_adjective(tag):
     return tag in ['JJ', 'JJR', 'JJS']
 
+def is_stopword(word):
+    return word in stop_words
 
-def penn_to_wn(tag):
+
+def penn_to_wordnet(tag):
     if is_adjective(tag):
-        return wn.ADJ
+        return wordnet.ADJ
     elif is_noun(tag):
-        return wn.NOUN
+        return wordnet.NOUN
     elif is_adverb(tag):
-        return wn.ADV
+        return wordnet.ADV
     elif is_verb(tag):
-        return wn.VERB
+        return wordnet.VERB
     else:
         return None
 
+
 def word_lemmantize(word):
     tag = nltk.pos_tag(word_tokenize(word))
-    wn_tag = penn_to_wn(tag[0][1])
+    wordnet_tag = penn_to_wordnet(tag[0][1])
     
-    if wn_tag != None:
-        return WordNetLemmatizer().lemmatize(tag[0],wn_tag)
+    if wordnet_tag != None:
+        return WordNetLemmatizer().lemmatize(tag[0][0],wordnet_tag)
 
     return word
+
 
 def text_tokenize(full_text):
     pass
 
+
 if __name__=="__main__":
-    phrase = "The quick brown\n fox was, running quickly through the yards"
+    # Sample for testing
+    phrase = "The quick brown\n fox was, running quickly through the yards."
     clean_text = text_clean(phrase)
     for word in clean_text:
         print(word)
+
+# Sample output:
+#
+# The -> 
+# quick -> quick
+# brown\n -> brown
+# fox -> fox
+# was, -> 
+# running -> run
+# quickly -> quickly
+# through -> 
+# the -> 
+# yards. -> yard
