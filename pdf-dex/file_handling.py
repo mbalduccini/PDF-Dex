@@ -1,17 +1,17 @@
+import os
 from pathlib import Path
 import PyPDF4
 import textract
 from utilities.types import PDF
 
-def read_elastic_metadata(file_name):
-    pass
-   
 
 def get_pdf_list() -> list:
     '''
     File paths to pdf
     '''
-    return [ path.name for path in Path('data').rglob('*.pdf')]
+    return [ 
+      path.name 
+      for path in Path('data').rglob('*.pdf')]
 
 
 def read_pdf(file_path: str) -> PDF:
@@ -37,4 +37,5 @@ def read_pdf(file_path: str) -> PDF:
 
 
 if __name__=="__main__":
-    pass
+    curr_PDF = read_pdf(r"PathToPDF.pdf")
+    print(curr_PDF.metadata)
