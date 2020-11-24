@@ -4,7 +4,7 @@ from .pdf_datetime import transform_date
 
 class PDF:
     def __init__(self, path, text, metadata):
-        self.path = path
+        self._id = path
         self.metadata = self._format_metadata(metadata)
         self.tokenized_words = None
         self.text = text
@@ -26,6 +26,6 @@ class PDF:
         return new_metadata          
 
     def __iter__(self):
-        yield 'file', self.path
+        yield 'path', self._id
         yield 'metadata', self.metadata
         yield 'tokenized_words', self.tokenized_words
