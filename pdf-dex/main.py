@@ -1,9 +1,10 @@
+import os
 from concurrent.futures import ThreadPoolExecutor
 import threading
 import argparse
 
 from file_handling import get_pdf_list
-from tokenize import process_text
+from process_files import process_file
 
 def create_threaded_workers(MAX_THREADS):
     """
@@ -16,15 +17,16 @@ def create_threaded_workers(MAX_THREADS):
     t = ThreadPoolExecutor(max_workers=MAX_THREADS)
     
     # Process PDF's
-    t.map(process_text, pdf_list)
+    t.map(process_file, pdf_list)
     t.shutdown()
 
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Process PDF\'s into Elasticsearch Index')
-    parser.add_argument('threads', type=int,
+    
+    parser.add_argument('threads', 
+                        type=int,
                         help='Number of threads to run process under.')
-
 
     args = parser.parse_args()
 
