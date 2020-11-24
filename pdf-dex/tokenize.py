@@ -93,9 +93,9 @@ def test_text_tokenize():
 
 
 # ---------------------------------------------------------------------------------
-def process_text(full_text: str) -> dict:
-    clean_text = text_clean(full_text)
-    tokenized = text_tokenize(clean_text)
+def process_text(pdf: PDF):
+    clean_text = text_clean(pdf.text)
+    pdf.tokenized_words = text_tokenize(clean_text)
     
     # call Elastic import from here
 
