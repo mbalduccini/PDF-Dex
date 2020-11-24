@@ -2,3 +2,4 @@ PyPDF4
 nltk
 textract
 elasticsearch
+python-dateutil
