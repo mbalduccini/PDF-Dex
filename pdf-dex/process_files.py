@@ -18,6 +18,9 @@ stop_words = set(stopwords.words('english'))
 
 
 def text_clean(full_text: str) -> str:
+    '''
+    Cleans a string 
+    '''
     word_bag = full_text.split()
     clean_text = []
 

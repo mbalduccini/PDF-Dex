@@ -1,7 +1,7 @@
 FROM python:3.8-alpine
 LABEL MAINTAINER="David Tippett"
-COPY . /pdf-dex/
-WORKDIR /pdf-dex/
+WORKDIR /code
+COPY . .
 
 # Setting default argument values
 ARG ES_IP="127.0.0.0"
@@ -11,5 +11,5 @@ ARG ES_PORT=9300
 ENV ES_IP=${ES_IP}
 ENV ES_PORT=${ES_PORT}
 
-RUN pip install -r /pdf-dex/requirements.txt
-CMD python /pdf-dex/pdf-dex/main.py $THREADS
+RUN pip install -r ./requirements.txt
+CMD python /pdf-dex/main.py $THREADS
