@@ -1,6 +1,9 @@
 from datetime import datetime
 from time import mktime, strptime
 from .pdf_datetime import transform_date
+from operator import itemgetter
+from collections import OrderedDict 
+
 
 class PDF:
     def __init__(self, path, text, metadata):
@@ -28,4 +31,8 @@ class PDF:
     def __iter__(self):
         yield 'path', self._id
         yield 'metadata', self.metadata
-        yield 'tokenized_words', self.tokenized_words
+        try:
+            top_n = OrderedDict(sorted(self.tokenized_words.items(), key = lambda x : x[1], reverse=True)[:925])
+        except Exception as e:
+            print(e)
+        yield 'tokenized_words', top_n
