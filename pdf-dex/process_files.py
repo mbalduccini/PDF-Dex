@@ -7,10 +7,10 @@ from elastic_connector import get_elastic_instance, file_exists, insert_file
 from file_handling import read_pdf
 
 # ---------------------------------------------------------------------------------
-def filter_list(pdf_list: list) -> list:
+def filter_list(pdf: str) -> str:
     es = get_elastic_instance()
-    return filter(lambda files: file_exists(files, es), pdf_list)
-
+    #filter(lambda files: file_exists(files, es), pdf_list)
+    return file_exists(pdf, es)
 
 # ---------------------------------------------------------------------------------
 regex = re.compile('[^a-z0-9]')
@@ -105,20 +105,21 @@ def test_text_tokenize():
 
 
 # ---------------------------------------------------------------------------------
-def process_file(pdf_list: list):
+def process_file(pdf_path: str):
     es = get_elastic_instance()
-    unprocessed_pdfs = filter_list(pdf_list)
+    #unprocessed_pdfs = filter_list(pdf_list)
     
-    for pdf_path in unprocessed_pdfs:
+    if not file_exists(pdf_path, es):
         # Get the text from the pdf
-        pdf = read_pdf(pdf)
+        pdf = read_pdf(pdf_path)
 
         # Clean out unwanted chars
         clean_text = text_clean(pdf.text)
         
         # Tokenize the output
         pdf.tokenized_words = text_tokenize(clean_text)
-      
+        print(len(pdf.tokenized_words))
+
         # Insert the file to elasticsearch
         insert_file(pdf, es)
 
