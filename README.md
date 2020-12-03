@@ -31,3 +31,55 @@ docker run \
     -v /Users/dtippett/Data:/data \
     pdf-dex:0.1
 ```
+
+
+### Sample Queries
+Get documents that contain the word general more than 5 times
+```
+GET /pdfs/_search
+{
+	"query": {
+        "range": {
+            "tokenized_words.general": {
+                "gte": 5
+            }
+		}
+    }
+}
+```
+
+Get documents that contain the field fragmentation
+```
+GET /pdfs/_search
+{
+	"query": {
+        "exists": {
+            "field":"tokenized_words.fragmentation"
+		}
+    }
+}
+```
+
+
+Get documents that contain multiple fields
+```
+GET /pdfs/_search
+{
+	"query": {
+        "bool": {
+            "should": [
+                {
+                    "exists": {
+                        "field":"tokenized_words.fragmentation"
+                    }
+                },
+                {
+                    "exists": {
+                        "field":"tokenized_words.general"
+                    }
+                }
+            ]
+        }
+    }
+}
+```
