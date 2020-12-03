@@ -10,8 +10,8 @@ def get_pdf_list() -> list:
     File paths to pdf
     '''
     return [ 
-      path.name 
-      for path in Path('data').rglob('*.pdf')]
+      str(path)
+      for path in Path('/data').rglob('*.pdf')]
 
 
 def read_pdf(file_path: str) -> PDF:
@@ -37,5 +37,7 @@ def read_pdf(file_path: str) -> PDF:
 
 
 if __name__=="__main__":
-    curr_PDF = read_pdf(r"PathToPDF.pdf")
-    print(curr_PDF.metadata)
+    p = get_pdf_list()
+    print(p)
+    #curr_PDF = read_pdf(r"PathToPDF.pdf")
+    #print(curr_PDF.metadata)
