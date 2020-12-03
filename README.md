@@ -16,7 +16,7 @@ docker run \
 
 ### Building Image
 From the root folder of the project run the following. 
-```dockdocker build --tag pdf-dex:0.5 .```
+```dockdocker build --tag pdf-dex:0.1 .```
 
 ### Running Image
 Find the ip of the elastic image by running `docker inspect elastic`
