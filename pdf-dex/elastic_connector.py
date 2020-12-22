@@ -12,6 +12,21 @@ if ELASTIC_PORT == None:
     ELASTIC_PORT = 9200
 
 
+# ---------------------------------------------------------------------------------
+# Logging initialization
+import logging
+
+logger = logging.getLogger(__name__)
+consoleHandle = logging.StreamHandler()
+consoleHandle.setLevel(logging.INFO)
+
+# Setup the formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+consoleHandle.setFormatter(formatter)
+logger.addHandler(consoleHandle)
+
+# ---------------------------------------------------------------------------------
+
 def file_exists(path:str, es: Elasticsearch):
     resp = es.exists(index="pdfs", id=path, ignore=[404])
 
@@ -37,11 +52,7 @@ def insert_file(file: PDF, es: Elasticsearch):
     try:
         result = es.index(index="pdfs", id=file._id, body=document)
     except Exception as e:
-        print(e)
+        logger.exception(f"There was an exception: {e}")
 
-    print(result)
+    logger.info(f"Inserting file: {file._id}")
     return result
-
-
-if __name__=="__main__":
-    pass

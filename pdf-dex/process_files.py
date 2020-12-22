@@ -7,12 +7,28 @@ from elastic_connector import get_elastic_instance, file_exists, insert_file
 from file_handling import read_pdf
 
 # ---------------------------------------------------------------------------------
+# Logging initialization
+import logging
+
+logger = logging.getLogger(__name__)
+consoleHandle = logging.StreamHandler()
+consoleHandle.setLevel(logging.INFO)
+
+# Setup the formatter
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+consoleHandle.setFormatter(formatter)
+logger.addHandler(consoleHandle)
+
+# ---------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------
 def filter_list(pdf: str) -> str:
     es = get_elastic_instance()
     #filter(lambda files: file_exists(files, es), pdf_list)
     return file_exists(pdf, es)
 
 # ---------------------------------------------------------------------------------
+
 regex = re.compile('[^a-z0-9]')
 stop_words = set(stopwords.words('english'))
 
@@ -106,38 +122,24 @@ def test_text_tokenize():
 
 # ---------------------------------------------------------------------------------
 def process_file(pdf_path: str):
-    es = get_elastic_instance()
-    #unprocessed_pdfs = filter_list(pdf_list)
-    
-    if not file_exists(pdf_path, es):
-        # Get the text from the pdf
-        pdf = read_pdf(pdf_path)
+    try: 
 
-        # Clean out unwanted chars
-        clean_text = text_clean(pdf.text)
+        es = get_elastic_instance()
+        #unprocessed_pdfs = filter_list(pdf_list)
         
-        # Tokenize the output
-        pdf.tokenized_words = text_tokenize(clean_text)
-        print(len(pdf.tokenized_words))
+        if not file_exists(pdf_path, es):
+            # Get the text from the pdf
+            pdf = read_pdf(pdf_path)
 
-        # Insert the file to elasticsearch
-        insert_file(pdf, es)
+            # Clean out unwanted chars
+            clean_text = text_clean(pdf.text)
+            
+            # Tokenize the output
+            pdf.tokenized_words = text_tokenize(clean_text)
+            print(len(pdf.tokenized_words))
 
-
-if __name__=="__main__":
-    from file_handling import read_pdf
-    import operator
-    import time
-
-    start = time.time()
+            # Insert the file to elasticsearch
+            insert_file(pdf, es)
     
-    full_text = read_pdf(r"C:\Users\datippett\Downloads\After_The_G_Zero_.pdf")
-    read_time_end = time.time()
-    print("Read PDF: ", read_time_end - start)
-
-    tokenized_text = process_text(full_text)
-    print(sorted(tokenized_text, key=tokenized_text.get, reverse=True)[:5])
-
-    end = time.time()
-    print("Parse Text: ", end - read_time_end)
-    print("Total Time: ", end - start)
+    except Exception as e:
+        logger.exception(f"There was an exception: {e}")
