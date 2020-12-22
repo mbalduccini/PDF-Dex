@@ -140,3 +140,5 @@ cython_debug/
 # VS Code Files
 .vscode
 launch.json
+
+node_modules

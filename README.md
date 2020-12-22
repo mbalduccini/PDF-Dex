@@ -16,18 +16,21 @@ docker run \
 
 ### Building Image
 From the root folder of the project run the following. 
-```dockdocker build --tag pdf-dex:0.5 .```
+```
+docker build --tag pdf-dex .
+```
 
 ### Running Image
 Find the ip of the elastic image by running `docker inspect elastic`
 
 ```
+data="path/to/pdfs/here"
 docker run \
     --name pdf-dex \
     -e "THREADS=1" \
     -e "ES_IP=172.17.0.2" \
     -e "ES_PORT=9200" \
     --network bridge \
-    -v /Users/dtippett/Data:/data \
-    pdf-dex:0.1
+    -v $data:/data \
+    pdf-dex
 ```
