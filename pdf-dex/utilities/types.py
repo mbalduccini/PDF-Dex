@@ -35,4 +35,5 @@ class PDF:
             top_n = OrderedDict(sorted(self.tokenized_words.items(), key = lambda x : x[1], reverse=True)[:925])
         except Exception as e:
             print(e)
-        yield 'tokenized_words', top_n
+        #yield 'tokenized_words', top_n
+        yield 'text', self.text
