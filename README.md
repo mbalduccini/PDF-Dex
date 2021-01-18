@@ -15,7 +15,9 @@ docker run \
 ```
 
 ### Building Image
-From the root folder of the project run the following. 
+git-clone the present project
+
+From the folder that contains pdf-dex run:
 ```
 docker build --tag pdf-dex .
 ```
@@ -31,6 +33,6 @@ docker run \
     -e "ES_IP=172.17.0.2" \
     -e "ES_PORT=9200" \
     --network bridge \
-    -v $data:/data \
+    -v "$data":/data \
     pdf-dex
 ```
